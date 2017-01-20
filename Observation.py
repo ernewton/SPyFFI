@@ -100,10 +100,27 @@ class Observation(object):
         kw = self.inputs['catalog']['skykw']
 
         logger.info('creating catalog from "real" stars')
-        self.camera.catalog = Catalogs.UCAC4(
-            ra=ra, dec=dec, radius=radius,
-            lckw=self.inputs['catalog']['lckw'],
-            **kw)
+        catalogue = self.inputs['catalog']['name']
+        if catalogue == "TOCS":
+            
+            self.camera.catalog = Catalogs.TOCS(
+                                               ra=ra, dec=dec, radius=radius,
+                                               lckw=self.inputs['catalog']['lckw'],
+                                               **kw)
+        if catalogue == "TIC":
+            
+            self.camera.catalog = Catalogs.TIC(
+                                               ra=ra, dec=dec, radius=radius,
+                                               lckw=self.inputs['catalog']['lckw'],
+                                               **kw)
+        elif catalogue == "UCAC4":
+            self.camera.catalog = Catalogs.UCAC4(
+                                                 ra=ra, dec=dec, radius=radius,
+                                                 lckw=self.inputs['catalog']['lckw'],
+                                                 **kw)   
+        else:
+            logger.info("Unknown catalogue, terminate simulation. Please choose TIC or UCAC4")
+            return         
 
     def createCatalogWithTestPattern(self):
         # determine the catalog purview from the camera object

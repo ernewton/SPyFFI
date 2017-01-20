@@ -101,55 +101,55 @@ camerakw = dict(
 # these inputs create the catalog of target stars
 catalogkw = dict(
 
-    # what type of a catalog is this?
-    #   options are ['sky', testpattern']
-    name = 'sky',
+	# what type of a catalog is this?
+	#   options are ['testpattern', 'ucac4', 'TIC', 'TOCS']
+	name = 'ucac4',
+	
+	# should we populate stars with light curves?
+	starsarevariable = True,
 
-    # should we populate stars with light curves?
-    starsarevariable = True,
+	# the default settings for a real star catalog
+	skykw = dict(fast=False, faintlimit=None),
 
-    # the default settings for a real star catalog
-    skykw = dict(fast=False, faintlimit=None),
+	# the default settings for a testpattern catalog
+	testpatternkw = dict(
+				# how far apart are stars from each other (")
+				spacing=500.0,
+				 # list of min, max magnitudes
+				magnitudes=[10,10],
+				# how far to nudge stars (")
+				randomizenudgesby = 21.1,
+				# random prop. mot. (mas/yr)
+				randomizepropermotionsby = 0.0,
+				# randomize the magnitudes?
+				randomizemagnitudes=False,
+				),
 
-    # the default settings for a testpattern catalog
-    testpatternkw = dict(
-                    # how far apart are stars from each other (")
-                    spacing=500.0,
-                     # list of min, max magnitudes
-                    magnitudes=[10,10],
-                    # how far to nudge stars (")
-                    randomizenudgesby = 21.1,
-                    # random prop. mot. (mas/yr)
-                    randomizepropermotionsby = 0.0,
-                    # randomize the magnitudes?
-                    randomizemagnitudes=False,
-                    ),
+	# the default settings for the light curves for the catalog
+	lckw = dict(    # what kinds of variabilty should be allowed?
+			options=['trapezoid', 'sin'],
 
-    # the default settings for the light curves for the catalog
-    lckw = dict(    # what kinds of variabilty should be allowed?
-                    options=['trapezoid', 'sin'],
+			# what magnitude is the faintest star that gets an lc
+			fainteststarwithlc=None,
 
-                    # what magnitude is the faintest star that gets an lc
-                    fainteststarwithlc=None,
+			# what fraction of the bright-enough stars get light curves?
+			fractionofstarswithlc=0.5,
 
-                    # what fraction of the bright-enough stars get light curves?
-                    fractionofstarswithlc=0.5,
+			# (the following keywords get fed into "random()")
+			# what fraction of light curves are extreme?
+			fractionwithextremelc=0.005,
 
-                    # (the following keywords get fed into "random()")
-                    # what fraction of light curves are extreme?
-                    fractionwithextremelc=0.005,
+			# what fraction of light curves get trapezoids (or None, for default)
+			fractionwithtrapezoid=0.3,
 
-                    # what fraction of light curves get trapezoids (or None, for default)
-                    fractionwithtrapezoid=0.3,
+			# what fraction of light curves get sin curves (or None, for default)
+			fractionwithrotation=0.2,
 
-                    # what fraction of light curves get sin curves (or None, for default)
-                    fractionwithrotation=0.2,
+			# what fraction of light curves get custom light curves (from 0 to 1)
+			fractionwithcustom=0.1,
 
-                    # what fraction of light curves get custom light curves (from 0 to 1)
-                    fractionwithcustom=0.1,
-
-                    # a seed for the randomizer, for repeatability
-                    seed=0)
+			# a seed for the randomizer, for repeatability
+			seed=0)
 
 )
 

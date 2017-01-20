@@ -48,7 +48,6 @@ data_url = "https://www.dropbox.com/s/0e4c2uk34phv4qx/SPyFFI_coreinputs.tar.gz"
 
 def initialize():
     # noinspection PyUnresolvedReferences
-    from sh import wget, tar, rm, shasum
     if not os.path.exists(prefix):
         os.makedirs(prefix)
 
@@ -59,7 +58,7 @@ def initialize():
                 os.makedirs(prefix)
             logger.info("Downloading data from {URL} to {DIR}".format(URL=data_url, DIR=prefix))
             tar(wget(data_url, "-qO-", _piped=True), "xz", _cwd=prefix)
-            logger.info("Checking checksums of downloaded files")
+            logger.info("Checking checksums of downloaded files in {CWD}".format(CWD=prefix))
             for line in shasum("-c", _cwd=prefix, _in=checksums, _iter=True):
                 logger.info(line)
         except Exception as e:
