@@ -11,11 +11,11 @@ logger.addHandler(log_file_handler)
 
 rotation_table = None
 
+import astropy.io.ascii as ascii
+import pkgutil
 
 def get_rotationtable():
     """Lazily load the McQuillan rotation periods table"""
-    import astropy.io.ascii as ascii
-    import pkgutil
     global rotation_table
     if rotation_table is None:
         logger.info("Reading McQuillan rotation table")
@@ -32,8 +32,6 @@ def get_transit_table():
     # "The search includes a total of $198,646$ targets,
     # of which $112,001$ were observed in every quarter
     # and $86,645$ were observed in a subset of the 17 quarters."
-    import astropy.io.ascii as ascii
-    import pkgutil
     global transit_table
     if transit_table is None:
         logger.info("Reading Kepler TCE table")
@@ -48,6 +46,23 @@ def draw_rotation(prng=np.random):
     return Sinusoid(P=row['PRot'],
                     E=prng.uniform(0, row['PRot']),
                     A=row['Rper'] / 1.0e6)
+
+
+def draw_cluster_rotation(prng=np.random, cluster=None, temperature=None):
+    """Return a random sine curve, drawn from a cartoon of arbitrary cluster rotation periods"""
+    per = 10.**prng.uniform(1)
+    if per > 2:
+    	amp = 0.01
+    else:
+    	amp = 0.07
+    if temperature < 3500. :
+    	per = 10**prng.uniform(-1,0)
+    	amp = 0.02
+    	
+    return Sinusoid(P=per,
+                    E=prng.uniform(0, per),
+                    A=amp)
+
 
 
 # noinspection PyUnresolvedReferences
@@ -83,7 +98,8 @@ def generate(code):
 # TODO: This should not have a **kw splat
 def random(options=('trapezoid', 'sin'),
            fractionwithextremelc=0.01, fractionwithrotation=None,
-           fractionwithtrapezoid=None, fractionwithcustom=0.0, **kw):
+           fractionwithtrapezoid=None, fractionwithcustom=0.0, 
+           cluster=None, temperature=None, **kw):
     """
     random() returns random Lightcurve.
 
@@ -122,7 +138,9 @@ def random(options=('trapezoid', 'sin'),
 
         # then, try to include a sine curve
         if 'sin' in options:
-            if np.random.uniform(0, 1) < fractionwithrotation:
+            if cluster is not None: ## assume all cluster stars have rotation periods
+                return draw_cluster_rotation(cluster=cluster, temperature=temperature)
+            elif np.random.uniform(0, 1) < fractionwithrotation:
                 return draw_rotation()
 
 

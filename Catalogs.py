@@ -59,13 +59,14 @@ class Star(object):
         for k in kwargs.keys():
             self.__dict__[k] = kwargs[k]
 
-
+# note cluster class now needs self.member, identifying cluster members
 class Catalog():
 	"""an object to keep track of lots of stars"""
-	def __init__(self):
+	def __init__(self, cluster=None):
 		# decide whether or not this Catalog is chatty
 		self.directory = 'catalogs/'
 		zachopy.utils.mkdir(os.path.join(settings.intermediates, self.directory))
+		self.cluster = cluster
 
 	def addLCs(self, fainteststarwithlc=None, fractionofstarswithlc=1.0, seed=None, **kw):
 		"""
@@ -104,9 +105,22 @@ class Catalog():
                 fainteststarwithlc,
                 fractionofstarswithlc * 100))
 		
-		# use the input seed, to ensure it wor
-		for i in np.random.choice(brightenough, len(brightenough) * fractionofstarswithlc, replace=False):
-			self.lightcurves[i] = Lightcurve.random(**kw)
+		if self.cluster is None:
+			# use the input seed, to ensure it wor
+			for i in np.random.choice(brightenough, len(brightenough) * fractionofstarswithlc, replace=False):
+				self.lightcurves[i] = Lightcurve.random(**kw)
+		else:
+			mem, = np.where(self.member == 1)
+			nonmem, = np.where(self.member != 1)
+			print "assigning periods to members ", len(mem)
+			print "assigning periods to nonmembers ", len(nonmem)
+			# all members get periods
+			for i in mem: 
+				self.lightcurves[i] = Lightcurve.random(cluster=self.cluster, **kw)
+			# only bright nonmembers get periods
+			for i in nonmem:
+				if (self.tmag[i] < fainteststarwithlc) or (fainteststarwithlc is None):
+					self.lightcurves[i] = Lightcurve.random(**kw)
 
 	@property
 	def lightcurvecodes(self):
@@ -516,14 +530,15 @@ class TIC(Catalog):
 class TOCS(Catalog):
     
     def __init__(self, cluster='NGC2516',
-    			 ra=119.0, dec=-61.0,
-                 radius=2,
+    			 ra=119.417, dec=-61.725,
+                 radius=1,
                  write=True,
                  fast=False,
                  lckw=None, starsarevariable=True, faintlimit=None, **kwargs):
         
         # initialize this catalog
-        Catalog.__init__(self)
+        Catalog.__init__(self, cluster=cluster)
+        
         if fast:
             radius *= 0.1
             
@@ -552,7 +567,7 @@ class TOCS(Catalog):
 		pmdectag = 'None'
 		tmagtag  = 'None'
 		temptag  = 'None'
-		typetag  = "f5"
+		typetag  = "f4"
 		return startag, ratag, dectag, pmratag, pmdectag, tmagtag, temptag, typetag
 
 	###
@@ -649,6 +664,7 @@ class TOCS(Catalog):
         self.tmag = tmag[ok]
         self.temperature = teff[ok]
         self.epoch = 2000.0
+        self.member = type[ok]
 
 
 

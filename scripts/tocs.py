@@ -18,18 +18,17 @@ inputs = default
 inputs['camera']['label'] = 'tocs'
 
 # what is the commanded central ra and dec of the field?
-#inputs['camera']['ra'] = 82.0
-#inputs['camera']['dec'] = 1.0
+# tell the camera where to point
+inputs['camera']['ra'] = 119.417
+inputs['camera']['dec'] = -60.725
 
 # if subarray = an integer number
 #   create a square subarray, with that many pixels on a side
 # if subarray = None,
 #   simply creating four separate CCDs, with their default sizes
-inputs['camera']['subarray'] = 1024
+inputs['camera']['subarray'] = 10
 
-# tell the camera where to point
-inputs['camera']['ra'] = 119.0
-inputs['camera']['dec'] = -61.0
+
 
 '''
     ------------_--------------_--------------_--------------_--------------_-------
@@ -103,7 +102,7 @@ inputs['expose']['display'] = False
 
 # cadencestodo should be a dictionary of cadences to expose, for example:
 # "{2:3, 120:3, 1800:3}" generates (3 each of 2s, 120s, 1800s exposures)
-inputs['observation']['cadencestodo'] = {1800:1}
+inputs['observation']['cadencestodo'] = {1800:100}
 
 '''
     ------------_--------------_--------------_--------------_--------------_-------
